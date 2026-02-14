@@ -121,6 +121,7 @@ PSHandlerFn channelInputs_onMessage(PSChannel * channel)
       return onMessage_inputsKeyModifiers;
 
     case SPICE_MSG_INPUTS_MOUSE_MOTION_ACK:
+      PS_LOG_INFO("SPICE_MSG_INPUTS_MOUSE_MOTION_ACK")
       return onMessage_inputsMouseMotionAck;
   }
 
@@ -245,8 +246,11 @@ bool purespice_mousePosition(uint32_t x, uint32_t y)
 bool purespice_mouseMotion(int32_t x, int32_t y)
 {
   PSChannel * channel = &g_ps.channels[PS_CHANNEL_INPUTS];
-  if (!channel->connected || !channel->ready)
+  if (!channel->connected || !channel->ready) {
+    PS_LOG_INFO("channel connected %d, channel ready %d", channel->connected, channel->ready);
     return false;
+  }
+  PS_LOG_INFO("sending mouse movement to %d %d", x, y);
 
   /* while the protocol supports movements greater then +-127 the QEMU
    * virtio-mouse device does not, so we need to split this up into seperate
